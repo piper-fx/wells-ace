@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wells Fargo - Profile & Settings</title>
+    <style>
+        /* --- CSS Reset & Variables (Identical to Dashboard) --- */
+        :root {
+            --wf-red: #d71e28;
+            --wf-black: #1f1f1f;
+            --wf-white: #ffffff;
+            --wf-gray-text: #5c5c5c;
+            --wf-gray-label: #5e5e5e;
+            
+            /* Exact gradient colors */
+            --wf-bg-gradient-start: #9e95a7; 
+            --wf-bg-gradient-mid: #dcd0d9;   
+            --wf-bg-gradient-end: #fdfbf9;   
+            
+            --wf-card-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --wf-btn-shadow: 0 3px 8px rgba(0,0,0,0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--wf-bg-gradient-start) 0%, var(--wf-bg-gradient-mid) 40%, var(--wf-bg-gradient-end) 100%);
+            color: var(--wf-black);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding-bottom: 80px; 
+        }
+
+        /* --- Header Section --- */
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0.8rem 1.25rem;
+            height: 60px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .notification-link {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #1a1a1a;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            background-color: var(--wf-red);
+            color: var(--wf-white);
+            font-size: 0.65rem;
+            font-weight: bold;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .sign-off-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 0.85rem;
+            gap: 0.3rem;
+            font-weight: 600;
+        }
+        
+        .sign-off-link svg {
+            fill: #1a1a1a;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            padding: 0 1rem 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin: 1rem 0 1.5rem 0.25rem;
+            color: #222;
+        }
+
+        /* --- Profile Card --- */
+        .profile-card {
+            background-color: var(--wf-white);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--wf-card-shadow);
+            margin-bottom: 1rem;
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #555;
+            margin-right: 1rem;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f9f9f9;
+            align-items: center;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: var(--wf-gray-label);
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #000;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Edit Controls */
+        .edit-btn {
+            background: none;
+            border: none;
+            color: var(--wf-red);
+            cursor: pointer;
+            padding: 2px;
+            font-size: 0.9rem;
+        }
+
+        .edit-input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            width: 150px;
+        }
+
+        .save-btn {
+            background-color: var(--wf-red);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        /* --- Action Buttons --- */
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--wf-white);
+            border: none;
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            box-shadow: var(--wf-card-shadow);
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .action-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Bottom Navigation Bar --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fdfdfd;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0.5rem 1rem; 
+            box-shadow: 0 -1px 4px rgba(0,0,0,0.05);
+            z-index: 100;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #757575;
+            font-size: 0.7rem;
+            gap: 4px;
+            font-weight: 500;
+            width: 20%;
+            padding-top: 4px;
+        }
+
+        .nav-item.active {
+            color: #d71e28;
+        }
+        
+        .nav-item svg {
+            stroke-width: 1.5px;
+        }
+        
+        .nav-item.active svg {
+            fill: #d71e28;
+            stroke: #d71e28;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-actions">
+            <a href="transaction.html" class="notification-link" aria-label="Notifications">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="notification-badge">1</span>
+            </a>
+            
+            <a href="index.html" class="sign-off-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3zm-4 7h8v8H8v-8zm4 2c-1.103 0-2 .897-2 2s.897 2 2 2 2-.897 2-2-.897-2-2-2z"/>
+                </svg>
+                Sign off
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">Profile & Settings</h1>
+
+        <div class="profile-card">
+            <div class="user-header">
+                <div class="user-avatar">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="user-name" id="profileName">Loading...</div>
+                    <div class="user-email" id="profileEmail">...</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Username</span>
+                <span class="detail-value" id="profileUsername">...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Phone</span>
+                <span class="detail-value" id="profilePhone">...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Address</span>
+                <div class="detail-value" id="addressContainer">
+                    <span id="profileAddress">...</span>
+                    <button class="edit-btn" onclick="enableEdit()" aria-label="Edit Address">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Customer Since</span>
+                <span class="detail-value" id="profileJoinDate">...</span>
+            </div>
+        </div>
+
+        <a href="#" class="action-button">
+            <div class="action-left">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Security & Sign In</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+
+        <a href="#" class="action-button">
+            <div class="action-left">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>Contact Us</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+
+        <a href="#" class="action-button">
+            <div class="action-left">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Statements & Docs</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="user-dashboard.html" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <path d="M9 22V12h6v10"></path>
+            </svg>
+            <span>Accounts</span>
+        </a>
+        <a href="#" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+                <path d="M5 17l7 5 7-5"/>
+            </svg>
+            <span>Deposit</span>
+        </a>
+        <a href="transfer-page.html" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <text x="12" y="16" text-anchor="middle" font-size="16" font-weight="bold">$</text>
+                <circle cx="12" cy="12" r="9"></circle>
+            </svg>
+            <span>Pay & Transfer</span>
+        </a>
+        <a href="#" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            <span>Explore</span>
+        </a>
+        <a href="profile.html" class="nav-item active">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+            <span>Menu</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) { window.location.href = 'login.html'; return; }
+
+            // Fetch User Data
+            try {
+                const response = await fetch(`/api/user-data?userId=${userId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const u = data.user;
+                    // Populate Fields
+                    document.getElementById('profileName').textContent = `${u.firstName} ${u.lastName}`;
+                    document.getElementById('profileEmail').textContent = u.email;
+                    document.getElementById('profileUsername').textContent = u.username;
+                    document.getElementById('profilePhone').textContent = u.phone;
+                    document.getElementById('profileAddress').textContent = u.address || 'Not Set';
+                    document.getElementById('profileJoinDate').textContent = u.joinDate || '2023';
+                }
+            } catch (err) {
+                console.error("Error loading profile:", err);
+            }
+        });
+
+        // Toggle Edit Mode for Address
+        function enableEdit() {
+            const container = document.getElementById('addressContainer');
+            const currentAddress = document.getElementById('profileAddress').textContent;
+            
+            // Swap text for input
+            container.innerHTML = `
+                <input type="text" id="editAddressInput" class="edit-input" value="${currentAddress}">
+                <button class="save-btn" onclick="saveAddress()">Save</button>
+            `;
+        }
+
+        async function saveAddress() {
+            const userId = sessionStorage.getItem('userId');
+            const newAddress = document.getElementById('editAddressInput').value;
+            const container = document.getElementById('addressContainer');
+
+            // Save to Server
+            try {
+                const response = await fetch('/api/update-address', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, address: newAddress })
+                });
+
+                const res = await response.json();
+
+                if (res.success) {
+                    // Revert to Text Display
+                    container.innerHTML = `
+                        <span id="profileAddress">${newAddress}</span>
+                        <button class="edit-btn" onclick="enableEdit()" aria-label="Edit Address">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                    `;
+                } else {
+                    alert('Failed to update address');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error');
+            }
+        }
+    </script>
+
+</body>
+</html>

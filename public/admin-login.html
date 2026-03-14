@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wells Fargo - Admin Sign On</title>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        :root {
+            --wf-red: #d71e28;
+            --wf-gold: #fec33c;
+            --wf-black: #1f1f1f;
+            --wf-white: #ffffff;
+            --wf-gray-text: #5c5c5c;
+            --wf-gray-input-border: #8d8d8d;
+            --wf-card-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f0ed; 
+            color: var(--wf-black);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        .header {
+            background-color: var(--wf-red);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 7px solid var(--wf-gold);
+        }
+
+        .logo {
+            color: var(--wf-white);
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Login Card --- */
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background-color: var(--wf-white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--wf-card-shadow);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 50px;
+            padding: 0 1rem;
+            font-size: 1.1rem;
+            border: 1px solid var(--wf-gray-input-border);
+            border-radius: 8px;
+            color: var(--wf-black);
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--wf-black);
+            border-width: 2px;
+        }
+
+        .btn-admin {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--wf-red);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-admin:hover {
+            background-color: #b9151e;
+        }
+
+        .error-msg {
+            color: #d71e28;
+            background-color: #fdecece0;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid #eebec2;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <span class="logo">WELLS FARGO ADMIN</span>
+    </header>
+
+    <div class="login-container">
+        <div class="login-card">
+            <h1 class="page-title">Admin Portal</h1>
+            
+            <form id="adminForm">
+                <div class="form-group">
+                    <input type="email" id="email" class="form-input" placeholder="Admin Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" class="form-input" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-admin" id="loginBtn">Access Dashboard</button>
+                <p id="errorMsg" class="error-msg"></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Clear previous session on load
+        sessionStorage.removeItem('adminLoggedIn');
+
+        document.getElementById('adminForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const btn = document.getElementById('loginBtn');
+
+            // Reset UI
+            errorMsg.style.display = 'none';
+            btn.textContent = 'Verifying...';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            try {
+                const response = await fetch('/api/admin-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // *** CRITICAL: Set Session Flag ***
+                    sessionStorage.setItem('adminLoggedIn', 'true');
+                    window.location.href = 'admin.html';
+                } else {
+                    throw new Error(data.message || 'Invalid credentials');
+                }
+
+            } catch (err) {
+                errorMsg.textContent = "System Error: " + err.message;
+                errorMsg.style.display = 'block';
+                btn.textContent = 'Access Dashboard';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        });
+    </script>
+</body>
+</html>

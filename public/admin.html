@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wells Fargo - Admin Dashboard</title>
+    
+    <script>
+        if (!sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'admin-login.html';
+        }
+    </script>
+
+    <style>
+        /* --- CSS Reset & Variables --- */
+        :root {
+            --wf-red: #d71e28;
+            --wf-gold: #fec33c;
+            --wf-black: #1f1f1f;
+            --wf-white: #ffffff;
+            --wf-gray-text: #5c5c5c;
+            --wf-gray-bg: #f4f0ed;
+            --wf-card-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--wf-gray-bg);
+            color: var(--wf-black);
+            min-height: 100vh;
+        }
+
+        /* --- Header --- */
+        .header {
+            background-color: var(--wf-red);
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 7px solid var(--wf-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: var(--wf-white);
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-badge {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* --- Layout --- */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* --- Stats Grid --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--wf-white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--wf-card-shadow);
+            border-left: 5px solid var(--wf-red);
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 300;
+            color: var(--wf-black);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--wf-gray-text);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* --- Action Cards --- */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--wf-white);
+            border-radius: 10px;
+            box-shadow: var(--wf-card-shadow);
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--wf-black);
+        }
+
+        /* --- Forms --- */
+        .form-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"], input[type="datetime-local"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--wf-red);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover { background-color: #b9151e; }
+        
+        .btn-black { background-color: #333; }
+        .btn-black:hover { background-color: #000; }
+
+        /* --- User List --- */
+        .users-section {
+            background: var(--wf-white);
+            border-radius: 10px;
+            box-shadow: var(--wf-card-shadow);
+            padding: 1.5rem;
+        }
+
+        .search-container input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-info h4 { margin: 0 0 5px 0; color: var(--wf-red); }
+        .user-info p { margin: 0; font-size: 0.85rem; color: #666; }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-successful { background: #e8f5e9; color: #2e7d32; }
+        .status-suspended { background: #ffebee; color: #c41e3a; }
+        .status-frozen { background: #e3f2fd; color: #1565c0; }
+
+        .btn-sm {
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            background: white;
+            border: 1px solid var(--wf-black);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-sm:hover { background: #f0f0f0; }
+
+        /* --- Messages --- */
+        .message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            display: none;
+            text-align: center;
+        }
+        .message.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .message.error { background: #ffebee; color: #c41e3a; border: 1px solid #ffcdd2; }
+
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show { display: flex; }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .account-preview {
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--wf-red);
+        }
+        
+        .readonly-grid {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            background: #f9f9f9; 
+            padding: 10px; 
+            margin-bottom: 15px; 
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">WELLS FARGO ADMIN</div>
+        <div class="header-actions">
+            <span class="admin-badge" id="adminName">Admin User</span>
+            <button class="logout-btn" onclick="logoutAdmin()">Sign Off</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="suspendedUsers" style="color: #c41e3a;">0</div>
+                <div class="stat-label">Suspended</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalBalance" style="color: #1e8e3e;">$0</div>
+                <div class="stat-label">Total Deposits</div>
+            </div>
+        </div>
+
+        <div class="actions-grid">
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Fund User Account</div>
+                </div>
+                <div id="fundMsg" class="message"></div>
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="fundAccountNumber" placeholder="10-digit account number">
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="fundAmount" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="fundDescription" placeholder="e.g. Mobile Deposit">
+                </div>
+                <button class="btn-primary" onclick="fundAccount()">Fund Account</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Debit User Account</div>
+                </div>
+                <div id="debitMsg" class="message"></div>
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="debitAccountNumber" placeholder="10-digit account number">
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="debitAmount" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Note (Internal)</label>
+                    <input type="text" id="debitNote" placeholder="Reason for debit">
+                </div>
+                <button class="btn-primary btn-black" onclick="debitUserAccount()">Debit Account</button>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Backdate Transaction</div>
+                </div>
+                <div id="transMsg" class="message"></div>
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="transAccountNumber" placeholder="10-digit account number">
+                </div>
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>Type</label>
+                        <select id="transType">
+                            <option value="credit">Credit (+)</option>
+                            <option value="debit">Debit (-)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Amount ($)</label>
+                        <input type="number" id="transAmount" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Merchant / Description</label>
+                    <input type="text" id="transName" placeholder="e.g. Netflix, Payroll">
+                </div>
+                <div class="form-group">
+                    <label>Date & Time</label>
+                    <input type="datetime-local" id="transDate">
+                </div>
+                <button class="btn-primary" onclick="createCustomTransaction()">Create History</button>
+            </div>
+
+        </div>
+
+        <div class="users-section">
+            <div class="card-header" style="justify-content: space-between; border-bottom: none;">
+                <div class="card-title">User Management</div>
+                <div class="search-container">
+                    <input type="text" id="userSearch" placeholder="Search name, email..." onkeyup="searchUsers()">
+                </div>
+            </div>
+            <div id="usersList">
+                <div style="text-align: center; color: #999; padding: 20px;">Loading users...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header-row">
+                <h3 style="margin:0;">Manage User</h3>
+                <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="closeEditModal()">&times;</button>
+            </div>
+
+            <div class="readonly-grid">
+                <div><label>Name</label><input type="text" id="viewName" disabled></div>
+                <div><label>Email</label><input type="text" id="viewEmail" disabled></div>
+                <div><label>SSN</label><input type="text" id="viewSSN" disabled style="font-family:monospace;"></div>
+                <div><label>DL/Card Number</label><input type="text" id="viewDL" disabled style="font-family:monospace;"></div>
+                <div><label>DOB</label><input type="text" id="viewDOB" disabled></div>
+                <div><label>User ID</label><input type="text" id="viewUserId" disabled></div>
+            </div>
+
+            <div class="form-group">
+                <label>User Accounts</label>
+                <div id="userAccountsDisplay"></div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="authToggle" onchange="toggleAuthFields()" style="width: auto;">
+                    Enable Auth Verification (IMF/COT Codes)
+                </label>
+                <p style="font-size: 0.8rem; color: #666;">User must enter this code to transfer.</p>
+            </div>
+
+            <div id="authFields" style="display: none; background: #f9f9f9; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <div class="form-group">
+                    <label>Auth Name</label>
+                    <input type="text" id="authName" placeholder="e.g. IMF Code">
+                </div>
+                <div class="form-group">
+                    <label>Auth Code Value</label>
+                    <input type="text" id="authCode" placeholder="e.g. 55829">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Account Status</label>
+                <select id="editUserStatus">
+                    <option value="successful">Active (Successful)</option>
+                    <option value="suspended">Suspended</option>
+                    <option value="frozen">Frozen</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Admin Note</label>
+                <textarea id="editUserNote" rows="2" placeholder="Internal notes..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-sm" onclick="closeEditModal()">Cancel</button>
+                <button class="btn-primary" style="width: auto; border-radius: 20px;" onclick="saveUserChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wells Fargo - Sign Up</title>
+    <style>
+        /* --- CSS Reset & Colors --- */
+        :root {
+            --wf-red: #d71e28;
+            --wf-gold: #fec33c;
+            --wf-blue: #005b8f;
+            --wf-black: #1f1f1f;
+            --wf-white: #ffffff;
+            --wf-gray-text: #444444;
+            --wf-gray-border: #767676;
+            --wf-gray-input-border: #8d8d8d;
+            --wf-btn-disabled: #e4e4e4;
+            --wf-btn-disabled-text: #b6b6b6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--wf-white);
+            color: var(--wf-black);
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 0; 
+        }
+
+        /* --- Header Section --- */
+        .header {
+            background-color: var(--wf-red);
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 7px solid var(--wf-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: var(--wf-white);
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 18px;
+            width: 26px;
+        }
+
+        .menu-bar { width: 100%; height: 2px; background-color: var(--wf-white); border-radius: 2px; }
+
+        /* --- Main Content --- */
+        .main-content {
+            padding: 2.5rem 1.5rem 1rem 1.5rem; 
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--wf-black);
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+        }
+
+        /* --- Form Elements --- */
+        .form-group { margin-bottom: 1rem; position: relative; }
+
+        .form-input {
+            width: 100%;
+            height: 54px;
+            padding: 0 1rem;
+            font-size: 1.15rem;
+            border: 1px solid var(--wf-gray-input-border);
+            border-radius: 12px;
+            color: var(--wf-black);
+            outline: none;
+            appearance: none;
+            background-color: transparent;
+        }
+
+        .form-input::placeholder { color: #555; font-size: 1.15rem; }
+        .form-input:focus { border-color: var(--wf-black); border-width: 1px; }
+
+        .toggle-password {
+            position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+            color: #003057; font-weight: bold; font-size: 1rem;
+            text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: block; width: 100%; padding: 14px; border-radius: 30px;
+            font-size: 1.1rem; font-weight: bold; text-align: center;
+            cursor: pointer; border: none; font-family: inherit; margin-top: 2rem;
+        }
+
+        .sign-up-btn {
+            background-color: var(--wf-btn-disabled);
+            color: var(--wf-btn-disabled-text);
+            margin-bottom: 1rem;
+            cursor: default;
+        }
+        
+        .sign-up-btn.active {
+            background-color: #003087;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* --- Sign In Redirect Link --- */
+        .signin-redirect-text {
+            text-align: center; margin-top: 1.5rem; font-size: 1.05rem; color: var(--wf-black);
+        }
+        .signin-link { color: var(--wf-blue); text-decoration: none; font-weight: bold; }
+        .signin-link:hover { text-decoration: underline; }
+
+        /* --- Footer Images --- */
+        .footer-image-container { width: 100%; margin-top: 2rem; display: flex; flex-direction: column; }
+        .footer-img { width: 100%; height: auto; display: block; vertical-align: middle; }
+
+        /* Error Message Style */
+        .error-banner {
+            background-color: #fdecece0;
+            border: 1px solid #d71e28;
+            color: #d71e28;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">WELLS FARGO</a>
+        <button class="menu-btn" aria-label="Menu">
+            <span class="menu-bar"></span>
+            <span class="menu-bar"></span>
+            <span class="menu-bar"></span>
+        </button>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">Sign Up</h1>
+
+        <div id="errorBanner" class="error-banner"></div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <input type="text" id="username" class="form-input" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" class="form-input" placeholder="Password" required>
+                <button type="button" class="toggle-password" id="togglePassword">Show</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="fullName" class="form-input" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="dob" class="form-input" placeholder="Date of Birth (MM/DD/YYYY)" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="ssn" class="form-input" placeholder="Social Security Number" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="email" class="form-input" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+                <input type="tel" id="phone" class="form-input" placeholder="Phone Number" required>
+            </div>
+
+            <button type="submit" class="btn sign-up-btn" id="signUpBtn" disabled>Sign Up</button>
+
+            <div class="signin-redirect-text">
+                Already have an account? <a href="login.html" class="signin-link">Sign in</a>
+            </div>
+        </form>
+    </main>
+
+    <div class="footer-image-container">
+        <img src="https://i.ibb.co/sY4BWQB/IMG-4135.jpg" alt="Footer Info 1" class="footer-img">
+        <img src="https://i.ibb.co/bjHWT6nt/IMG-4136.jpg" alt="Footer Info 2" class="footer-img">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const registerForm = document.getElementById('registerForm');
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.getElementById('togglePassword');
+            const signUpBtn = document.getElementById('signUpBtn');
+            const errorBanner = document.getElementById('errorBanner');
+            
+            const inputs = [
+                document.getElementById('username'),
+                document.getElementById('password'),
+                document.getElementById('fullName'),
+                document.getElementById('dob'),
+                document.getElementById('ssn'),
+                document.getElementById('email'),
+                document.getElementById('phone')
+            ];
+
+            // Toggle Password Visibility
+            toggleBtn.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                toggleBtn.textContent = type === 'password' ? 'Show' : 'Hide';
+            });
+
+            // Enable/Disable Button based on input
+            function checkAllFields() {
+                const allFilled = inputs.every(input => input.value.trim().length > 0);
+                if (allFilled) {
+                    signUpBtn.classList.add('active');
+                    signUpBtn.removeAttribute('disabled');
+                } else {
+                    signUpBtn.classList.remove('active');
+                    signUpBtn.setAttribute('disabled', 'true');
+                }
+            }
+
+            inputs.forEach(input => input.addEventListener('input', checkAllFields));
+
+            // Handle Form Submission
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorBanner.style.display = 'none';
+                signUpBtn.textContent = 'Processing...';
+                signUpBtn.setAttribute('disabled', 'true');
+
+                const userData = {
+                    username: inputs[0].value,
+                    password: inputs[1].value,
+                    fullName: inputs[2].value,
+                    dob: inputs[3].value,
+                    ssn: inputs[4].value,
+                    email: inputs[5].value,
+                    phone: inputs[6].value
+                };
+
+                try {
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userData)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        // Success! Redirect to Login
+                        window.location.href = 'login.html';
+                    } else {
+                        // Show Error
+                        throw new Error(result.message || 'Registration failed');
+                    }
+                } catch (err) {
+                    errorBanner.textContent = err.message;
+                    errorBanner.style.display = 'block';
+                    signUpBtn.textContent = 'Sign Up';
+                    signUpBtn.removeAttribute('disabled');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

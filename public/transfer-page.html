@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wells Fargo - Transfer & Pay</title>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        :root {
+            --wf-red: #d71e28;
+            --wf-black: #1f1f1f;
+            --wf-white: #ffffff;
+            --wf-gray-text: #5c5c5c;
+            --wf-gray-label: #5e5e5e;
+            --wf-bg-gradient-start: #9e95a7; 
+            --wf-bg-gradient-mid: #dcd0d9;   
+            --wf-bg-gradient-end: #fdfbf9;   
+            --wf-card-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --wf-btn-shadow: 0 3px 8px rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--wf-bg-gradient-start) 0%, var(--wf-bg-gradient-mid) 40%, var(--wf-bg-gradient-end) 100%);
+            color: var(--wf-black);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        /* --- Header --- */
+        .header { display: flex; justify-content: flex-end; align-items: center; padding: 0.8rem 1.25rem; height: 60px; }
+        .header-actions { display: flex; align-items: center; gap: 1.25rem; }
+        .notification-btn { background: none; border: none; cursor: pointer; color: #1a1a1a; padding: 4px; position: relative; }
+        .notification-badge { position: absolute; top: 1px; right: 1px; background-color: var(--wf-red); color: var(--wf-white); font-size: 0.65rem; font-weight: bold; width: 15px; height: 15px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 1px solid rgba(255,255,255,0.3); }
+        .sign-off-link { display: flex; align-items: center; text-decoration: none; color: #1a1a1a; font-size: 0.85rem; gap: 0.3rem; font-weight: 600; }
+        .sign-off-link svg { fill: #1a1a1a; }
+
+        /* --- Content --- */
+        .main-content { padding: 0 1rem 1.5rem; }
+        .page-header-title { font-size: 1.8rem; font-weight: 300; margin: 1rem 0 1.5rem 0.25rem; color: #222; }
+
+        /* --- Options --- */
+        .transfer-options-list { display: flex; flex-direction: column; gap: 1rem; }
+        .transfer-option-card { background-color: var(--wf-white); border-radius: 10px; padding: 1.25rem; box-shadow: var(--wf-card-shadow); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: transform 0.1s; }
+        .transfer-option-card:active { transform: scale(0.98); }
+        .option-content { display: flex; align-items: center; gap: 1rem; }
+        .option-icon { width: 40px; height: 40px; background-color: #f4f0ed; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--wf-red); }
+        .option-text h3 { font-size: 1rem; font-weight: 600; color: #000; margin-bottom: 0.2rem; }
+        .option-text p { font-size: 0.8rem; color: #666; }
+
+        /* --- Forms --- */
+        .transfer-form-container { display: none; background-color: var(--wf-white); border-radius: 10px; padding: 1.5rem; box-shadow: var(--wf-card-shadow); margin-top: 1rem; }
+        .form-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--wf-black); display: flex; justify-content: space-between; align-items: center; }
+        .close-form { background: none; border: none; color: var(--wf-red); font-weight: bold; font-size: 0.9rem; cursor: pointer; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-label { display: block; font-size: 0.9rem; color: var(--wf-gray-label); margin-bottom: 0.5rem; }
+        .form-input, .form-select { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; font-family: inherit; }
+        .action-btn { width: 100%; padding: 1rem; background-color: var(--wf-red); color: white; border: none; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+
+        /* --- Receipt --- */
+        .receipt-container { display: none; background-color: var(--wf-white); border-radius: 10px; padding: 2rem 1.5rem; box-shadow: var(--wf-card-shadow); text-align: center; margin-top: 1rem; }
+        .success-icon { width: 60px; height: 60px; background-color: #e6f4ea; color: #1e8e3e; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1rem; }
+        .receipt-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.5rem; color: #1e8e3e; }
+        .receipt-amount { font-size: 2.5rem; font-weight: 300; margin: 1rem 0; color: var(--wf-black); }
+        .receipt-details { text-align: left; margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-size: 0.95rem; }
+        .receipt-label { color: #666; }
+        .receipt-value { font-weight: 600; color: #000; text-align: right; }
+        .done-btn { background-color: transparent; border: 1px solid var(--wf-black); color: var(--wf-black); width: 100%; padding: 0.8rem; border-radius: 25px; font-weight: 600; margin-top: 1.5rem; cursor: pointer; }
+
+        /* --- MODALS (Security & Auth) --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px;
+        }
+
+        .modal-content-box {
+            background-color: white; padding: 2rem; border-radius: 12px; text-align: center;
+            max-width: 350px; width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Security Specific */
+        .security-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .security-title { color: var(--wf-red); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.8rem; }
+        .modal-message { color: #333; font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem; }
+        
+        /* Auth Specific */
+        .auth-icon { color: var(--wf-red); margin-bottom: 15px; }
+        .auth-input { width: 100%; padding: 12px; font-size: 1.2rem; text-align: center; letter-spacing: 2px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .auth-error { color: var(--wf-red); font-size: 0.9rem; margin-bottom: 10px; display: none; }
+
+        .modal-btn { background-color: var(--wf-red); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; }
+        .modal-btn.secondary { background-color: transparent; color: #555; border: 1px solid #ccc; margin-top: 10px; }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #fdfdfd; display: flex; justify-content: space-between; padding: 0.5rem 0.5rem 1rem; box-shadow: 0 -1px 4px rgba(0,0,0,0.05); z-index: 100; border-top: 1px solid #eee; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #757575; font-size: 0.7rem; gap: 4px; font-weight: 500; width: 20%; padding-top: 4px; }
+        .nav-item.active { color: #d71e28; }
+        .nav-item svg { stroke-width: 1.5px; }
+        .nav-item.active svg { fill: #d71e28; stroke: #d71e28; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-actions">
+            <button class="notification-btn" aria-label="Notifications">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="notification-badge">1</span>
+            </button>
+            <a href="index.html" class="sign-off-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3zm-4 7h8v8H8v-8zm4 2c-1.103 0-2 .897-2 2s.897 2 2 2 2-.897 2-2-.897-2-2-2z"/>
+                </svg>
+                Sign off
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-header-title" id="pageTitle">Transfer & Pay</h1>
+
+        <div id="transferOptions" class="transfer-options-list">
+            <div class="transfer-option-card" onclick="openForm('internal')">
+                <div class="option-content">
+                    <div class="option-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <div class="option-text">
+                        <h3>Wells Fargo Accounts</h3>
+                        <p>Instant internal transfer</p>
+                    </div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+
+            <div class="transfer-option-card" onclick="openForm('external')">
+                <div class="option-content">
+                    <div class="option-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="12" y1="15" x2="12" y2="15"></line></svg>
+                    </div>
+                    <div class="option-text">
+                        <h3>Transfer to Other Bank</h3>
+                        <p>ACH & External accounts</p>
+                    </div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+
+            <div class="transfer-option-card" onclick="openForm('zelle')">
+                <div class="option-content">
+                    <div class="option-icon" style="color: #6d1e70;">
+                        <span style="font-weight:900; font-size:1.1rem; font-family:sans-serif;">Z</span>
+                    </div>
+                    <div class="option-text">
+                        <h3>Zelle®</h3>
+                        <p>Send money to friends</p>
+                    </div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+
+            <div class="transfer-option-card" onclick="openForm('wire')">
+                <div class="option-content">
+                    <div class="option-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    </div>
+                    <div class="option-text">
+                        <h3>Wire Transfer</h3>
+                        <p>Domestic & International</p>
+                    </div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+        </div>
+
+        <div id="transferFormContainer" class="transfer-form-container">
+            <div class="form-title">
+                <span id="formHeaderTitle">Transfer</span>
+                <button class="close-form" onclick="closeForm()">Cancel</button>
+            </div>
+            
+            <form id="activeTransferForm" onsubmit="processTransfer(event)">
+                <div class="form-group">
+                    <label class="form-label">From Account</label>
+                    <select class="form-select" id="fromAccountSelect">
+                        <option>Loading accounts...</option>
+                    </select>
+                </div>
+
+                <div id="dynamicInputs"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Amount</label>
+                    <input type="number" class="form-input" id="amountInput" placeholder="$0.00" required step="0.01">
+                </div>
+
+                <button type="submit" class="action-btn">Send Money</button>
+            </form>
+        </div>
+
+        <div id="receiptContainer" class="receipt-container">
+            <div class="success-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h2 class="receipt-title">Payment Sent</h2>
+            <div class="receipt-amount" id="receiptAmount">$0.00</div>
+            <p style="color: #666; font-size: 0.9rem;">Your transfer has been processed.</p>
+
+            <div class="receipt-details">
+                <div class="receipt-row">
+                    <span class="receipt-label">Type</span>
+                    <span class="receipt-value" id="receiptType">Transfer</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">To</span>
+                    <span class="receipt-value" id="receiptTo">Name</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Date</span>
+                    <span class="receipt-value" id="receiptDate">Oct 24, 2023</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Ref #</span>
+                    <span class="receipt-value" id="receiptRef">000000</span>
+                </div>
+            </div>
+
+            <button class="done-btn" onclick="resetPage()">Done</button>
+        </div>
+
+    </main>
+
+    <div id="securityModal" class="modal-overlay">
+        <div class="modal-content-box">
+            <span class="security-icon">🚫</span>
+            <h3 class="security-title">Access Restricted</h3>
+            <p class="modal-message" id="securityMessage">
+                Account suspended, contact live chat support for more information.
+            </p>
+            <button class="modal-btn" onclick="closeSecurityModal()">Close</button>
+        </div>
+    </div>
+
+    <div id="authModal" class="modal-overlay">
+        <div class="modal-content-box">
+            <div class="auth-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h3 class="security-title" id="authTitle">Verify Transaction</h3>
+            <p class="modal-message">Please enter your <span id="authNameDisplay" style="font-weight:bold;">Security Code</span> to proceed.</p>
+            
+            <input type="text" id="authCodeInput" class="auth-input" placeholder="Enter Code">
+            <p id="authErrorMsg" class="auth-error">Incorrect Code. Please try again.</p>
+
+            <button class="modal-btn" onclick="verifyAuthCode()">Verify</button>
+            <button class="modal-btn secondary" onclick="closeAuthModal()">Cancel</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="user-dashboard.html" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <path d="M9 22V12h6v10"></path>
+            </svg>
+            <span>Accounts</span>
+        </a>
+        <a href="#" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+                <path d="M5 17l7 5 7-5"/>
+            </svg>
+            <span>Deposit</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <text x="12" y="16" text-anchor="middle" font-size="16" font-weight="bold">$</text>
+                <circle cx="12" cy="12" r="9"></circle>
+            </svg>
+            <span>Pay & Transfer</span>
+        </a>
+        <a href="#" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            <span>Explore</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+            <span>Menu</span>
+        </a>
+    </nav>
+
+    <script src="transfer-page.js"></script>
+</body>
+</html>

